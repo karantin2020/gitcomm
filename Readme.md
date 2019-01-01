@@ -61,7 +61,7 @@ Template is from this repo https://github.com/williampeterpaul/.git-commit-templ
 6. Wrap the body at 320 characters
 7. ~~Use the body to explain what and why vs. how~~ // That rule is for user impl
 
-Example commite message:
+Example commit message:
 
     Redirect user to the requested page after login
 
