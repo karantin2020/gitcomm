@@ -3,6 +3,8 @@
 Cli app to implement git message template  
 Automate your commit message workflow with some rules
 
+The name 'gitcomm' is short 'git commit message'.
+
 Usage:
 
 ```sh
