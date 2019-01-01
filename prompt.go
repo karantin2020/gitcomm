@@ -42,19 +42,19 @@ var qs = []*survey.Question{
 		Name:      "subject",
 		Prompt:    &survey.Input{Message: "Type in the subject"},
 		Validate:  validator(72),
-		Transform: survey.TransformString(linter),
+		Transform: survey.TransformString(linterSubject),
 	},
 	{
 		Name:      "body",
 		Prompt:    &survey.Multiline{Message: "Type in the body"},
 		Validate:  validator(320),
-		Transform: survey.TransformString(linter),
+		Transform: survey.TransformString(linterBody),
 	},
 	{
 		Name:      "foot",
 		Prompt:    &survey.Multiline{Message: "Type in the foot"},
 		Validate:  validator(50),
-		Transform: survey.TransformString(linter),
+		Transform: survey.TransformString(linterFoot),
 	},
 }
 
@@ -80,17 +80,40 @@ func Prompt() Message {
 	return msg
 }
 
-func linter(s string) string {
+func linterSubject(s string) string {
+	// Remove all leading and trailing white spaces
+	s = strings.TrimSpace(s)
+	s = strings.TrimSuffix(s, "...")
+	// Then strings.Title the first word in string
+	flds := strings.Fields(s)
+	flds[0] = strings.Title(flds[0])
+	return strings.Join(flds, " ")
+}
+
+func linterBody(s string) string {
 	// Remove all leading and trailing white spaces
 	s = strings.TrimSpace(s)
 	// Split string to lines
 	strs := strings.Split(s, "\n")
-	strs[0] = strings.TrimSuffix(strs[0], "...")
 	// Then strings.Title the first word in string
 	flds := strings.Fields(strs[0])
 	flds[0] = strings.Title(flds[0])
 	strs[0] = strings.Join(flds, " ")
 	// Return glued lines
+	return strings.Join(strs, "\n")
+}
+
+func linterFoot(s string) string {
+	s = strings.TrimSpace(s)
+	// Split string to lines
+	strs := strings.Split(s, "\n")
+	for i := len(strs); i > 0; i-- {
+		if strings.HasPrefix(strs[i-1], "* ") {
+			strs[i-1] = strings.TrimPrefix(strs[i-1], "* ")
+		}
+		strs[i-1] = linterSubject(strs[i-1])
+		strs[i-1] = "* " + strs[i-1]
+	}
 	return strings.Join(strs, "\n")
 }
 
