@@ -2,6 +2,7 @@ package gitcomm
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"strings"
 
@@ -40,22 +41,24 @@ var qs = []*survey.Question{
 	{
 		Name:      "subject",
 		Prompt:    &survey.Input{Message: "Type in the subject"},
-		Validate:  validator(50),
+		Validate:  validator(72),
 		Transform: survey.TransformString(linter),
 	},
 	{
 		Name:      "body",
 		Prompt:    &survey.Multiline{Message: "Type in the body"},
-		Validate:  validator(72),
+		Validate:  validator(320),
 		Transform: survey.TransformString(linter),
 	},
 	{
 		Name:      "foot",
-		Prompt:    &survey.Multiline{Message: "Type in the footer"},
-		Validate:  validator(24),
+		Prompt:    &survey.Multiline{Message: "Type in the foot"},
+		Validate:  validator(50),
 		Transform: survey.TransformString(linter),
 	},
 }
+
+var cs = &survey.Confirm{Message: "Is everything OK? Continue?"}
 
 // Prompt function assignes user input to Message struct
 func Prompt() Message {
@@ -67,16 +70,27 @@ func Prompt() Message {
 		}
 		os.Exit(1)
 	}
+	Info("Commit message is:\n%s\n", msg.String())
+	confirm := false
+	survey.AskOne(cs, &confirm, nil)
+	if !confirm {
+		log.Printf("Commit flow breaked by user\n")
+		os.Exit(1)
+	}
 	return msg
 }
 
 func linter(s string) string {
 	// Remove all leading and trailing white spaces
 	s = strings.TrimSpace(s)
+	// Split string to lines
+	strs := strings.Split(s, "\n")
 	// Then strings.Title the first word in string
-	flds := strings.Fields(s)
+	flds := strings.Fields(strs[0])
 	flds[0] = strings.Title(flds[0])
-	return strings.Join(flds, " ")
+	strs[0] = strings.Join(flds, " ")
+	// Return glued lines
+	return strings.Join(strs, "\n")
 }
 
 func validator(n int) func(val interface{}) error {

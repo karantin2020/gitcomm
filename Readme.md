@@ -40,11 +40,11 @@ Template is from this repo https://github.com/williampeterpaul/.git-commit-templ
 > Keep in mind: This has all been said before.
 
 1. Separate subject from body with a blank line
-2. Limit the subject line to 50 characters
+2. Limit the subject line to 72 characters
 3. Capitalize the subject line
 4. Do not end the subject line with a period
 5. ~~Use the imperative mood in the subject line~~ // That rule is for user impl
-6. Wrap the body at 72 characters
+6. Wrap the body at 320 characters
 7. ~~Use the body to explain what and why vs. how~~ // That rule is for user impl
 
 Example commite message:
