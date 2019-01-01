@@ -50,7 +50,7 @@ var qs = []*survey.Question{
 		Transform: survey.TransformString(linter),
 	},
 	{
-		Name:      "footer",
+		Name:      "foot",
 		Prompt:    &survey.Multiline{Message: "Type in the footer"},
 		Validate:  validator(24),
 		Transform: survey.TransformString(linter),

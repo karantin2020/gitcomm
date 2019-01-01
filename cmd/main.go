@@ -30,7 +30,7 @@ func main() {
 			log.SetOutput(ioutil.Discard)
 		}
 		if !gitcomm.CheckForUncommited() {
-			log.Printf("Nothing to commit, working tree clean\n")
+			log.Printf("nothing to commit, working tree clean\n")
 			return
 		}
 		msg := gitcomm.Prompt().String()
