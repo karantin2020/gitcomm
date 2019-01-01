@@ -17,10 +17,11 @@ func main() {
 
 	var (
 		// declare the -r flag as a boolean flag
-		addFiles = app.BoolOpt("A addAll", false, "Adds, modifies, and removes index entries"+
+		addFiles = app.BoolOpt("A addAll", false, "Adds, modifies, and removes index entries "+
 			"to match the working tree. Evals `git add -A`")
 		verbose = app.BoolOpt("v verbose", false, "Switch log output")
-		show    = app.BoolOpt("s show", false, "Show last commit or not")
+		show    = app.BoolOpt("s show", false, "Show last commit or not. "+
+			"Evals `git show -s` in the end of execution")
 	)
 
 	// Specify the action to execute when the app is invoked correctly

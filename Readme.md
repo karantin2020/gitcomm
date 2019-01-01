@@ -3,6 +3,20 @@
 Cli app to implement git message template  
 Automate your commit message workflow with some rules
 
+Usage:
+
+```sh
+Usage: gitcomm [-Avs]
+
+Automate git commit messaging
+
+Options:
+  -V, --version   Show the version and exit
+  -A, --addAll    Adds, modifies, and removes index entries to match the working tree. Evals `git add -A`
+  -v, --verbose   Switch log output
+  -s, --show      Show last commit or not. Evals `git show -s` in the end of execution
+```
+
 ```sh
 # type(<scope>): <Subject>
 

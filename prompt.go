@@ -70,7 +70,7 @@ func Prompt() Message {
 		}
 		os.Exit(1)
 	}
-	Info("Commit message is:\n%s\n", msg.String())
+	Info("\nCommit message is:\n%s\n", msg.String())
 	confirm := false
 	survey.AskOne(cs, &confirm, nil)
 	if !confirm {
