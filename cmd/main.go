@@ -33,6 +33,7 @@ func main() {
 			log.Printf("nothing to commit, working tree clean\n")
 			return
 		}
+		log.Printf("there are new changes in working directory\n")
 		msg := gitcomm.Prompt().String()
 		gitcomm.GitExec(*addFiles, *show, msg)
 	}

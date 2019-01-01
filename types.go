@@ -19,6 +19,6 @@ type Message struct {
 
 func (m Message) String() string {
 	buf := bytes.NewBuffer(nil)
-	fmt.Fprintf(buf, "%s: %s\n\n%s\n%s", m.Type, m.Subject, m.Body, m.Foot)
+	fmt.Fprintf(buf, "%s: %s\n\n%s\n\n%s", m.Type, m.Subject, m.Body, m.Foot)
 	return buf.String()
 }

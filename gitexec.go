@@ -32,7 +32,7 @@ func GitExec(addAll, show bool, msg string) {
 // CheckForUncommited function checkes if there are changes that need commit
 func CheckForUncommited() bool {
 	cmd := exec.Command("git", "status", "--porcelain")
-	log.Printf("git status --porcelain\n")
+	// log.Printf("git status --porcelain\n")
 	out, err := cmd.CombinedOutput()
 	CheckIfError(err)
 	return len(out) != 0
