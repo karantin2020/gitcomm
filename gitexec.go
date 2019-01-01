@@ -15,8 +15,12 @@ func GitExec(addAll, show bool, msg string) {
 		CheckIfError(err)
 		fmt.Println(string(out))
 	}
-	cmd := exec.Command("git", "-c", "color.ui=always", "commit", "-a", "-m", msg)
-	log.Printf("git commit -a -m \"%s\"\n", msg)
+	aflag := "-a"
+	if addAll {
+		aflag = ""
+	}
+	cmd := exec.Command("git", "-c", "color.ui=always", "commit", aflag, "-m", msg)
+	log.Printf("git commit %s -m \"%s\"\n", aflag, msg)
 	out, err := cmd.CombinedOutput()
 	CheckIfError(err)
 	fmt.Printf("\n%s\n", string(out))
