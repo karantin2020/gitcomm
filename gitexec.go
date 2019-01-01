@@ -19,7 +19,7 @@ func GitExec(addAll, show bool, msg string) {
 	log.Printf("git commit -a -m \"%s\"\n", msg)
 	out, err := cmd.CombinedOutput()
 	CheckIfError(err)
-	fmt.Println(string(out))
+	fmt.Printf("\n%s\n", string(out))
 	if show {
 		cmd := exec.Command("git", "-c", "color.ui=always", "show", "-s")
 		log.Printf("git show -s\n")
