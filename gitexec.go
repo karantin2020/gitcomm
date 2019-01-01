@@ -22,7 +22,7 @@ func GitExec(addAll, show bool, msg string) {
 	fmt.Printf("\n%s\n", string(out))
 
 	cmd = exec.Command("git", "-c", "color.ui=always", "commit", "-m", msg)
-	log.Printf("git commit -m \"%s\"\n", msg)
+	log.Printf("git commit -m\n")
 	out, err = cmd.CombinedOutput()
 	CheckIfError(err)
 	fmt.Printf("\n%s\n", string(out))
