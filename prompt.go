@@ -2,9 +2,11 @@ package gitcomm
 
 import (
 	"fmt"
+	"os"
 	"strings"
 
 	survey "gopkg.in/AlecAivazis/survey.v1"
+	"gopkg.in/AlecAivazis/survey.v1/terminal"
 )
 
 var (
@@ -59,7 +61,12 @@ var qs = []*survey.Question{
 func Prompt() Message {
 	// Perform the questions
 	err := survey.Ask(qs, &msg)
-	CheckIfError(err)
+	if err != nil {
+		if err != terminal.InterruptErr {
+			fmt.Printf("\x1b[31;1m%s\x1b[0m\n", fmt.Sprintf("error: %s", err))
+		}
+		os.Exit(1)
+	}
 	return msg
 }
 
