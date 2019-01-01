@@ -15,13 +15,15 @@ func GitExec(addAll, show bool, msg string) {
 		CheckIfError(err)
 		fmt.Println(string(out))
 	}
-	aflag := "-a"
-	if addAll {
-		aflag = ""
-	}
-	cmd := exec.Command("git", "-c", "color.ui=always", "commit", aflag, "-m", msg)
-	log.Printf("git commit %s -m \"%s\"\n", aflag, msg)
+	cmd := exec.Command("git", "add", "-u")
+	log.Printf("git add -u")
 	out, err := cmd.CombinedOutput()
+	CheckIfError(err)
+	fmt.Printf("\n%s\n", string(out))
+
+	cmd = exec.Command("git", "-c", "color.ui=always", "commit", "-m", msg)
+	log.Printf("git commit -m \"%s\"\n", msg)
+	out, err = cmd.CombinedOutput()
 	CheckIfError(err)
 	fmt.Printf("\n%s\n", string(out))
 	if show {
