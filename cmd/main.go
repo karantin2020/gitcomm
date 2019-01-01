@@ -1,6 +1,7 @@
 package main
 
 import (
+	"io/ioutil"
 	"log"
 	"os"
 
@@ -26,6 +27,7 @@ func main() {
 	app.Action = func() {
 		if !*verbose {
 			log.SetFlags(0)
+			log.SetOutput(ioutil.Discard)
 		}
 		if !gitcomm.CheckForUncommited() {
 			log.Printf("Nothing to commit, working tree clean\n")
