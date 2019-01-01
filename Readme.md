@@ -4,11 +4,11 @@ Cli app to implement git message template
 Automate your commit message workflow with some rules
 
 ```sh
-# Type(<scope>): <subject>
+# type(<scope>): <Subject>
 
-# <body>
+# <Body>
 
-# * <footer>
+# * <Footer>
 ```
 
 #### Type should be one of the following:
