@@ -85,6 +85,7 @@ func linter(s string) string {
 	s = strings.TrimSpace(s)
 	// Split string to lines
 	strs := strings.Split(s, "\n")
+	strs[0] = strings.TrimSuffix(strs[0], "...")
 	// Then strings.Title the first word in string
 	flds := strings.Fields(strs[0])
 	flds[0] = strings.Title(flds[0])
