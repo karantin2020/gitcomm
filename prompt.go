@@ -69,6 +69,7 @@ func Prompt() Message {
 		if err != terminal.InterruptErr {
 			fmt.Printf("\x1b[31;1m%s\x1b[0m\n", fmt.Sprintf("error: %s", err))
 		}
+		log.Printf("interrupted by user\n")
 		os.Exit(1)
 	}
 	Info("\nCommit message is:\n%s\n", msg.String())

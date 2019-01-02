@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -31,6 +32,10 @@ func main() {
 		if !*verbose {
 			log.SetFlags(0)
 			log.SetOutput(ioutil.Discard)
+		}
+		if !gitcomm.CheckIsGitDir() {
+			fmt.Println("Current directory is not inside git worktree")
+			os.Exit(1)
 		}
 		if !gitcomm.CheckForUncommited() {
 			log.Printf("nothing to commit, working tree clean\n")
