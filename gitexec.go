@@ -16,7 +16,7 @@ func GitExec(addAll, show bool, msg string) {
 		CheckIfError(err)
 		fmt.Println(string(out))
 	}
-	cmd := exec.Command("git", "add", "-u")
+	cmd := exec.Command("git", "-c", "color.ui=always", "add", "-u")
 	log.Printf("git add -u")
 	out, err := cmd.CombinedOutput()
 	CheckIfError(err)

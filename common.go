@@ -19,3 +19,11 @@ func CheckIfError(err error) {
 func Info(format string, args ...interface{}) {
 	fmt.Printf("\x1b[34;1m%s\x1b[0m\n", fmt.Sprintf(format, args...))
 }
+
+// ExitIfError exits with status 1 if an error is not nil
+func ExitIfError(err error) {
+	if err == nil {
+		return
+	}
+	os.Exit(1)
+}

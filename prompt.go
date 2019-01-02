@@ -60,26 +60,38 @@ var qs = []*survey.Question{
 }
 
 var cs = &survey.Confirm{Message: "Is everything OK? Continue?"}
+var ts = &survey.Select{
+	Message: "Choose tag level",
+	Options: []string{
+		"patch",
+		"minor",
+		"major",
+	},
+	Default: "patch",
+}
 
 // Prompt function assignes user input to Message struct
 func Prompt() Message {
 	// Perform the questions
 	err := survey.Ask(qs, &msg)
-	if err != nil {
-		if err != terminal.InterruptErr {
-			fmt.Printf("\x1b[31;1m%s\x1b[0m\n", fmt.Sprintf("error: %s", err))
-		}
-		log.Printf("interrupted by user\n")
-		os.Exit(1)
-	}
+	checkInterrupt(err)
 	Info("\nCommit message is:\n%s\n", msg.String())
 	confirm := false
-	survey.AskOne(cs, &confirm, nil)
+	err = survey.AskOne(cs, &confirm, nil)
+	checkInterrupt(err)
 	if !confirm {
 		log.Printf("Commit flow breaked by user\n")
 		os.Exit(1)
 	}
 	return msg
+}
+
+// TagPrompt prompting tag version level to upgrade
+func TagPrompt() string {
+	level := "patch"
+	err := survey.AskOne(ts, &level, nil)
+	checkInterrupt(err)
+	return level
 }
 
 func linterSubject(s string) string {
@@ -126,5 +138,15 @@ func validator(n int) func(val interface{}) error {
 			return fmt.Errorf("This response cannot be longer than %d characters", n)
 		}
 		return nil
+	}
+}
+
+func checkInterrupt(err error) {
+	if err != nil {
+		if err != terminal.InterruptErr {
+			fmt.Printf("\x1b[31;1m%s\x1b[0m\n", fmt.Sprintf("error: %s", err))
+		}
+		log.Printf("interrupted by user\n")
+		os.Exit(1)
 	}
 }
