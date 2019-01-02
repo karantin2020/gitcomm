@@ -36,6 +36,7 @@ Options:
 - refactor (refactoring production code)
 - test (adding missing tests, refactoring tests; no production code change)
 - chore (updating grunt tasks etc; no production code change)
+- version (description of version upgrade)
 
 Scope is just the scope of the change. Something like (admin) or (teacher).  
 Subject should use imperative tone and say what you did.  

@@ -9,9 +9,11 @@ import (
 	"github.com/karantin2020/gitcomm"
 )
 
+const version = "gitcomm 0.2.1"
+
 func main() {
 	app := cli.App("gitcomm", "Automate git commit messaging")
-	app.Version("V version", "gitcomm 0.1.1")
+	app.Version("V version", version)
 
 	app.Spec = "[-Avs]"
 

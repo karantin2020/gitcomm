@@ -24,6 +24,7 @@ var (
 		"style",
 		"refactor",
 		"test",
+		"version",
 		"chore",
 	}
 )
