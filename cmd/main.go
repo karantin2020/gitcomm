@@ -43,13 +43,14 @@ func main() {
 			gitcomm.UndoLastCommit()
 			os.Exit(0)
 		}
-		if !gitcomm.CheckForUncommited() {
+		if gitcomm.CheckForUncommited() {
+			log.Printf("there are new changes in working directory\n")
+			msg := gitcomm.Prompt().String()
+			gitcomm.GitExec(*addFiles, *show, msg)
+		} else {
 			log.Printf("nothing to commit, working tree clean\n")
-			return
 		}
-		log.Printf("there are new changes in working directory\n")
-		msg := gitcomm.Prompt().String()
-		gitcomm.GitExec(*addFiles, *show, msg)
+
 		if *tag {
 			level := gitcomm.TagPrompt()
 			gitcomm.AutoTag(level)
