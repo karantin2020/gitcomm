@@ -1,8 +1,6 @@
 package gitcomm
 
 import (
-	"fmt"
-	"log"
 	"os/exec"
 	"strings"
 )
@@ -10,29 +8,12 @@ import (
 // GitExec function performs git workflow
 func GitExec(addAll, show bool, msg string) {
 	if addAll {
-		cmd := exec.Command("git", "-c", "color.ui=always", "add", "-A")
-		log.Printf("git add -A\n")
-		out, err := cmd.CombinedOutput()
-		CheckIfError(err)
-		fmt.Println(string(out))
+		gitColorCmd("add", "-A")
 	}
-	cmd := exec.Command("git", "-c", "color.ui=always", "add", "-u")
-	log.Printf("git add -u")
-	out, err := cmd.CombinedOutput()
-	CheckIfError(err)
-	fmt.Printf("\n%s\n", string(out))
-
-	cmd = exec.Command("git", "-c", "color.ui=always", "commit", "-m", msg)
-	log.Printf("git commit -m\n")
-	out, err = cmd.CombinedOutput()
-	CheckIfError(err)
-	fmt.Printf("\n%s\n", string(out))
+	gitColorCmd("add", "-u")
+	gitColorCmd("commit", "-m", msg)
 	if show {
-		cmd := exec.Command("git", "-c", "color.ui=always", "show", "-s")
-		log.Printf("git show -s\n")
-		out, err := cmd.CombinedOutput()
-		CheckIfError(err)
-		fmt.Println(string(out))
+		gitColorCmd("show", "-s")
 	}
 }
 

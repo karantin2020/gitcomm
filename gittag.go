@@ -31,17 +31,15 @@ func AutoTag(level string) {
 		log.Println("unknown current version")
 		os.Exit(1)
 	}
-
 	newVer := bumpVersion(curVer, levels[level])
-	args := []string{"-c", "color.ui=always", "tag", "-a", "-m", newVer}
-
+	tagCmd := []string{"tag", "-a", "-m", newVer}
 	if sign {
-		args = append(args, "-s")
+		tagCmd = append(tagCmd, "-s")
 	}
-	args = append(args, newVer)
+	tagCmd = append(tagCmd, newVer)
 
 	fmt.Println(newVer)
-	git(args...)
+	gitColorCmd(tagCmd...)
 }
 
 func getGitConfig(args ...string) string {

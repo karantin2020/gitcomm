@@ -1,8 +1,10 @@
 package gitcomm
 
 import (
+	"log"
 	"os"
 	"os/exec"
+	"strings"
 )
 
 var (
@@ -25,4 +27,13 @@ func git(args ...string) {
 	cmd.Stdin = os.Stdin
 	err := cmd.Run()
 	ExitIfError(err)
+}
+
+func gitColorCmd(cmd ...string) {
+	if cmd == nil || len(cmd) == 0 {
+		return
+	}
+	args := append(colorOutputFlag, cmd...)
+	log.Printf("git %s\n", strings.Join(cmd, " "))
+	git(args...)
 }
