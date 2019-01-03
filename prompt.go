@@ -94,6 +94,14 @@ func TagPrompt() string {
 	return level
 }
 
+// PromptComfirm is a common function to ask confirm before some action
+func PromptComfirm(msg string) bool {
+	confirm := false
+	err := survey.AskOne(&survey.Confirm{Message: msg}, &confirm, nil)
+	checkInterrupt(err)
+	return confirm
+}
+
 func linterSubject(s string) string {
 	// Remove all leading and trailing white spaces
 	s = strings.TrimSpace(s)

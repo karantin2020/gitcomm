@@ -13,7 +13,8 @@ import (
 const version = "gitcomm 0.2.3"
 
 func main() {
-	app := cli.App("gitcomm", "Automate git commit messaging")
+	app := cli.App("gitcomm", "Automate git commit messaging\n"+
+		"\nSource https://github.com/karantin2020/gitcomm")
 	app.Version("V version", version)
 
 	app.Spec = "[-v] [-Ast] | [-u]"
@@ -26,7 +27,7 @@ func main() {
 		show    = app.BoolOpt("s show", false, "Show last commit or not. "+
 			"Evals `git show -s` in the end of execution")
 		tag  = app.BoolOpt("t tag", false, "Create an annonated tag for the next logical version")
-		undo = app.BoolOpt("u undo", false, "Revert the last commit")
+		undo = app.BoolOpt("u undo", false, "Revert last commit")
 	)
 
 	// Specify the action to execute when the app is invoked correctly
@@ -40,7 +41,9 @@ func main() {
 			os.Exit(1)
 		}
 		if *undo {
-			gitcomm.UndoLastCommit()
+			if gitcomm.PromptComfirm("Revert last commit?") {
+				gitcomm.UndoLastCommit()
+			}
 			os.Exit(0)
 		}
 		if gitcomm.CheckForUncommited() {
