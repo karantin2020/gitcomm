@@ -32,7 +32,7 @@ func AutoTag(level string) {
 		os.Exit(1)
 	}
 	newVer := bumpVersion(curVer, levels[level])
-	tagCmd := []string{"tag", "-a", "-m", "gitcomm version " + newVer}
+	tagCmd := []string{"tag", "-a", "-m", "version " + newVer}
 	if sign {
 		tagCmd = append(tagCmd, "-s")
 	}
