@@ -80,7 +80,7 @@ func Prompt() Message {
 	err = survey.AskOne(cs, &confirm, nil)
 	checkInterrupt(err)
 	if !confirm {
-		log.Printf("Commit flow broke by user\n")
+		log.Printf("Commit flow interrupted by user\n")
 		os.Exit(1)
 	}
 	return msg
