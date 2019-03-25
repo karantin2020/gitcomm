@@ -7,6 +7,8 @@ The name 'gitcomm' is short 'git commit message'.
 
 Usage:
 
+![demo](https://github.com/karantin2020/gitcomm/raw/master/docs/screen.gif)
+
 ```sh
 Usage: gitcomm [-Avs]
 
