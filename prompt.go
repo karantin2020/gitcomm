@@ -88,16 +88,38 @@ func fillMessage(msg *Message) {
 }
 
 // Prompt function assignes user input to Message struct
-func Prompt() Message {
+func Prompt() string {
 	fillMessage(&msg)
-	Info("\nCommit message is:\n%s\n", msg.String())
-	c, err := bb.Confirm("Is everything OK? Continue", "N", true)
-	checkInterrupt(err)
-	if c == "N" {
-		log.Printf("Commit flow interrupted by user\n")
-		os.Exit(1)
+	gitMsg := msg.String()
+	Info("\nCommit message is:\n%s\n", gitMsg)
+	var err error
+	cp := bb.ConfirmPrompt{
+		BasicPrompt: bb.BasicPrompt{
+			Label:   "Is everything OK? Continue",
+			Default: "N",
+			NoIcons: true,
+		},
+		ConfirmOpt: "e",
 	}
-	return msg
+	c, err := cp.Run()
+	checkConfirmStatus(c, err)
+	// checkInterrupt(err)
+	// if c == "N" {
+	// 	log.Printf("Commit flow interrupted by user\n")
+	// 	os.Exit(1)
+	// }
+	if c == "E" {
+		gitMsg, err = bb.Editor("", gitMsg)
+		checkInterrupt(err)
+		checkConfirmStatus(bb.Confirm("Is everything OK? Continue", "N", true))
+		// checkInterrupt(err)
+		// if c == "N" {
+		// 	log.Printf("Commit flow interrupted by user\n")
+		// 	os.Exit(1)
+		// }
+		return gitMsg
+	}
+	return gitMsg
 }
 
 // TagPrompt prompting tag version level to upgrade
@@ -182,6 +204,14 @@ func checkInterrupt(err error) {
 			fmt.Printf("\x1b[31;1m%s\x1b[0m\n", fmt.Sprintf("error: %s", err))
 		}
 		log.Printf("interrupted by user\n")
+		os.Exit(1)
+	}
+}
+
+func checkConfirmStatus(c string, err error) {
+	checkInterrupt(err)
+	if c == "N" {
+		log.Printf("Commit flow interrupted by user\n")
 		os.Exit(1)
 	}
 }

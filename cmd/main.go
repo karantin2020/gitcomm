@@ -48,7 +48,7 @@ func main() {
 		}
 		if gitcomm.CheckForUncommited() {
 			log.Printf("there are new changes in working directory\n")
-			msg := gitcomm.Prompt().String()
+			msg := gitcomm.Prompt()
 			gitcomm.GitExec(*addFiles, *show, msg)
 		} else {
 			log.Printf("nothing to commit, working tree clean\n")
