@@ -5,9 +5,9 @@ import (
 	"log"
 	"os"
 	"strings"
+	"unicode"
 
-	survey "gopkg.in/AlecAivazis/survey.v1"
-	"gopkg.in/AlecAivazis/survey.v1/terminal"
+	bb "github.com/karantin2020/promptui"
 )
 
 var (
@@ -29,57 +29,71 @@ var (
 	}
 )
 
-// the questions to ask
-var qs = []*survey.Question{
-	{
-		Name: "type",
-		Prompt: &survey.Select{
-			Message: "Choose a type(<scope>)",
-			Options: types,
-			Default: "feat",
+func fillMessage(msg *Message) {
+	var err error
+	msg.Type, err = bb.PromptAfterSelect("Choose a type(<scope>)", types)
+	checkInterrupt(err)
+	p := bb.Prompt{
+		BasicPrompt: bb.BasicPrompt{
+			Label:     "Type in the subject",
+			Formatter: linterSubject,
+			Validate: func(s string) error {
+				if s == "" {
+					return bb.NewValidationError("Subject must not be empty string")
+				}
+				if len(s) > 72 {
+					return bb.NewValidationError("Subject cannot be longer than 72 characters")
+				}
+				return nil
+			},
 		},
-	},
-	{
-		Name:      "subject",
-		Prompt:    &survey.Input{Message: "Type in the subject"},
-		Validate:  validator(72),
-		Transform: survey.TransformString(linterSubject),
-	},
-	{
-		Name:      "body",
-		Prompt:    &survey.Multiline{Message: "Type in the body"},
-		Validate:  validator(320),
-		Transform: survey.TransformString(linterBody),
-	},
-	{
-		Name:      "foot",
-		Prompt:    &survey.Multiline{Message: "Type in the foot"},
-		Validate:  validator(50),
-		Transform: survey.TransformString(linterFoot),
-	},
-}
-
-var cs = &survey.Confirm{Message: "Is everything OK? Continue?"}
-var ts = &survey.Select{
-	Message: "Choose tag level",
-	Options: []string{
-		"patch",
-		"minor",
-		"major",
-	},
-	Default: "patch",
+	}
+	msg.Subject, err = p.Run()
+	checkInterrupt(err)
+	mlBody := bb.MultilinePrompt{
+		BasicPrompt: bb.BasicPrompt{
+			Label:     "Type in the body",
+			Default:   msg.Subject,
+			Formatter: linterBody,
+			Validate: func(s string) error {
+				if s == "" {
+					return bb.NewValidationError("Body must not be empty string")
+				}
+				if len(s) > 320 {
+					return bb.NewValidationError("Body cannot be longer than 320 characters")
+				}
+				return nil
+			},
+		},
+	}
+	msg.Body, err = mlBody.Run()
+	checkInterrupt(err)
+	mlFoot := bb.MultilinePrompt{
+		BasicPrompt: bb.BasicPrompt{
+			Label:     "Type in the foot",
+			Formatter: linterFoot,
+			Validate: func(s string) error {
+				if s == "" {
+					return bb.NewValidationError("Foot must not be empty string")
+				}
+				if len(s) > 50 {
+					return bb.NewValidationError("Foot cannot be longer than 50 characters")
+				}
+				return nil
+			},
+		},
+	}
+	msg.Foot, err = mlFoot.Run()
+	checkInterrupt(err)
 }
 
 // Prompt function assignes user input to Message struct
 func Prompt() Message {
-	// Perform the questions
-	err := survey.Ask(qs, &msg)
-	checkInterrupt(err)
+	fillMessage(&msg)
 	Info("\nCommit message is:\n%s\n", msg.String())
-	confirm := false
-	err = survey.AskOne(cs, &confirm, nil)
+	c, err := bb.Confirm("Is everything OK? Continue", "N", true)
 	checkInterrupt(err)
-	if !confirm {
+	if c == "N" {
 		log.Printf("Commit flow interrupted by user\n")
 		os.Exit(1)
 	}
@@ -88,18 +102,28 @@ func Prompt() Message {
 
 // TagPrompt prompting tag version level to upgrade
 func TagPrompt() string {
-	level := "patch"
-	err := survey.AskOne(ts, &level, nil)
+	s := bb.Select{
+		Label: "Choose tag level",
+		Items: []string{
+			"patch",
+			"minor",
+			"major",
+		},
+		Default: 0,
+	}
+	_, level, err := s.Run()
 	checkInterrupt(err)
 	return level
 }
 
-// PromptComfirm is a common function to ask confirm before some action
-func PromptComfirm(msg string) bool {
-	confirm := false
-	err := survey.AskOne(&survey.Confirm{Message: msg}, &confirm, nil)
+// PromptConfirm is a common function to ask confirm before some action
+func PromptConfirm(msg string) bool {
+	c, err := bb.Confirm(msg, "N", false)
 	checkInterrupt(err)
-	return confirm
+	if c == "N" {
+		return false
+	}
+	return true
 }
 
 func linterSubject(s string) string {
@@ -113,16 +137,19 @@ func linterSubject(s string) string {
 }
 
 func linterBody(s string) string {
-	// Remove all leading and trailing white spaces
-	s = strings.TrimSpace(s)
-	// Split string to lines
-	strs := strings.Split(s, "\n")
-	// Then strings.Title the first word in string
-	flds := strings.Fields(strs[0])
-	flds[0] = strings.Title(flds[0])
-	strs[0] = strings.Join(flds, " ")
-	// Return glued lines
-	return strings.Join(strs, "\n")
+	var upl = func(sl string) string {
+		rs := []rune(sl)
+		if len(rs) > 0 {
+			rs[0] = unicode.ToUpper(rs[0])
+		}
+		return string(rs)
+	}
+	out := []string{}
+	ins := strings.Split(s, "\n")
+	for i := range ins {
+		out = append(out, upl(ins[i]))
+	}
+	return strings.Join(out, "\n")
 }
 
 func linterFoot(s string) string {
@@ -151,7 +178,7 @@ func validator(n int) func(val interface{}) error {
 
 func checkInterrupt(err error) {
 	if err != nil {
-		if err != terminal.InterruptErr {
+		if err != bb.ErrInterrupt {
 			fmt.Printf("\x1b[31;1m%s\x1b[0m\n", fmt.Sprintf("error: %s", err))
 		}
 		log.Printf("interrupted by user\n")
