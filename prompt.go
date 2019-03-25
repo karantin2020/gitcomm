@@ -103,20 +103,15 @@ func Prompt() string {
 	}
 	c, err := cp.Run()
 	checkConfirmStatus(c, err)
-	// checkInterrupt(err)
-	// if c == "N" {
-	// 	log.Printf("Commit flow interrupted by user\n")
-	// 	os.Exit(1)
-	// }
 	if c == "E" {
 		gitMsg, err = bb.Editor("", gitMsg)
 		checkInterrupt(err)
+		numlines := len(strings.Split(gitMsg, "\n")) + 2
+		for ; numlines > 0; numlines-- {
+			fmt.Print(bb.ClearUpLine())
+		}
+		Info("Commit message is:\n%s", gitMsg)
 		checkConfirmStatus(bb.Confirm("Is everything OK? Continue", "N", true))
-		// checkInterrupt(err)
-		// if c == "N" {
-		// 	log.Printf("Commit flow interrupted by user\n")
-		// 	os.Exit(1)
-		// }
 		return gitMsg
 	}
 	return gitMsg
