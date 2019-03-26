@@ -43,10 +43,10 @@ Options:
 - feat (new feature)
 - fix (bug fix)
 - docs (changes to documentation)
-- style (formatting, missing semi colons, etc; no code change)
-- refactor (refactoring production code)
-- test (adding missing tests, refactoring tests; no production code change)
-- chore (updating grunt tasks etc; no production code change)
+- style (format, missing semi colons, etc; no code change)
+- refactor (refactor production code)
+- test (add missing tests, refactor tests; no production code change)
+- chore (update grunt tasks etc; no production code change)
 - version (description of version upgrade)
 
 Scope is just the scope of the change. Something like (admin) or (teacher).  
@@ -72,7 +72,7 @@ Template is from this repo https://github.com/williampeterpaul/.git-commit-templ
 3. Capitalize the subject line
 4. Do not end the subject line with a period
 5. ~~Use the imperative mood in the subject line~~ // That rule is for user impl
-6. Wrap the body at 320 characters
+6. Wrap the body at 72 characters. Limit the body length to 320 characters
 7. ~~Use the body to explain what and why vs. how~~ // That rule is for user impl
 
 Example commit message:

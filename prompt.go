@@ -18,14 +18,14 @@ var (
 		Foot:    "",
 	}
 	types = []string{
-		"feat",
-		"fix",
-		"docs",
-		"style",
-		"refactor",
-		"test",
-		"version",
-		"chore",
+		"feat	[new feature]",
+		"fix		[bug fix]",
+		"docs	[changes to documentation]",
+		"style	[format, missing semi colons, etc; no code change]",
+		"refactor	[refactor production code]",
+		"test	[add missing tests, refactor tests; no production code change]",
+		"chore	[update grunt tasks etc; no production code change]",
+		"version	[description of version upgrade]",
 	}
 )
 
@@ -53,7 +53,7 @@ func fillMessage(msg *Message) {
 	mlBody := bb.MultilinePrompt{
 		BasicPrompt: bb.BasicPrompt{
 			Label:     "Type in the body",
-			Default:   msg.Subject,
+			Default:   "# If applied, this commit will\n",
 			Formatter: linterBody,
 			Validate: func(s string) error {
 				if s == "" {
@@ -61,6 +61,12 @@ func fillMessage(msg *Message) {
 				}
 				if len(s) > 320 {
 					return bb.NewValidationError("Body cannot be longer than 320 characters")
+				}
+				ins := strings.Split(s, "\n")
+				for i := range ins {
+					if len(ins[i]) > 72 {
+						return bb.NewValidationError("Body must be wraped at 72 characters")
+					}
 				}
 				return nil
 			},
@@ -164,6 +170,10 @@ func linterBody(s string) string {
 	out := []string{}
 	ins := strings.Split(s, "\n")
 	for i := range ins {
+		// if the line is commented with # at the start pass that line
+		if ins[i][0] == '#' {
+			continue
+		}
 		out = append(out, upl(ins[i]))
 	}
 	return strings.Join(out, "\n")
