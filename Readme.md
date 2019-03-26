@@ -9,6 +9,15 @@ Usage:
 
 ![demo](https://github.com/karantin2020/gitcomm/raw/master/docs/screen.gif)
 
+Download and install it:
+
+```sh
+$ go get -u -d github.com/karantin2020/gitcomm/cmd
+$ go install -o gitcomm github.com/karantin2020/gitcomm/cmd
+```
+
+Or install precompiled release binary.  
+
 ```sh
 Usage: gitcomm [-Avs]
 
