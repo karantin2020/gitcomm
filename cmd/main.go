@@ -10,7 +10,7 @@ import (
 	"github.com/karantin2020/gitcomm"
 )
 
-const version = "gitcomm 0.3.2"
+const version = "gitcomm 0.3.3"
 
 func main() {
 	app := cli.App("gitcomm", "Automate git commit messaging\n"+

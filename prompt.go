@@ -152,6 +152,7 @@ func PromptConfirm(msg string) bool {
 func linterSubject(s string) string {
 	// Remove all leading and trailing white spaces
 	s = strings.TrimSpace(s)
+	// Remove trailing period ...
 	s = strings.TrimSuffix(s, "...")
 	// Then strings.Title the first word in string
 	flds := strings.Fields(s)
