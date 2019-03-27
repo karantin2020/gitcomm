@@ -169,15 +169,47 @@ func linterBody(s string) string {
 		return string(rs)
 	}
 	out := []string{}
-	ins := strings.Split(s, "\n")
-	for i := range ins {
+	lines := strings.Split(s, "\n")
+	for i := range lines {
 		// if the line is commented with # at the start pass that line
-		if ins[i][0] == '#' {
+		if len(lines[i]) > 0 && lines[i][0] == '#' {
 			continue
 		}
-		out = append(out, upl(ins[i]))
+		if len(lines[i]) > 72 {
+			nl := wrapLine(lines[i], 72)
+			out = append(out, nl...)
+			continue
+		}
+		out = append(out, upl(lines[i]))
 	}
 	return strings.Join(out, "\n")
+}
+
+func wrapLine(l string, n int) []string {
+	words := strings.Split(l, " ")
+	out := []string{}
+	s := ""
+	i := 0
+	for {
+		if i >= len(words) {
+			out = append(out, s)
+			break
+		}
+		separator := " "
+		if s == "" {
+			separator = ""
+		}
+		sv := s + separator + words[i]
+		if len(sv) >= n {
+			out = append(out, s)
+			sv = ""
+			i--
+		}
+		s = sv
+
+		i++
+	}
+	return out
 }
 
 func linterFoot(s string) string {
