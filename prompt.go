@@ -60,7 +60,7 @@ func fillMessage(msg *Message) {
 					return bb.NewValidationError("Body must not be empty string")
 				}
 				if len(s) > 320 {
-					return bb.NewValidationError("Body cannot be longer than 320 characters")
+					return bb.NewValidationError("Body is longer than 320 characters")
 				}
 				ins := strings.Split(s, "\n")
 				for i := range ins {
@@ -98,27 +98,32 @@ func Prompt() string {
 	fillMessage(&msg)
 	gitMsg := msg.String()
 	Info("\nCommit message is:\n%s\n", gitMsg)
-	var err error
-	cp := bb.ConfirmPrompt{
-		BasicPrompt: bb.BasicPrompt{
-			Label:   "Is everything OK? Continue",
-			Default: "N",
-			NoIcons: true,
-		},
-		ConfirmOpt: "e",
-	}
-	c, err := cp.Run()
-	checkConfirmStatus(c, err)
-	if c == "E" {
-		gitMsg, err = bb.Editor("", gitMsg)
-		checkInterrupt(err)
-		numlines := len(strings.Split(gitMsg, "\n")) + 2
-		for ; numlines > 0; numlines-- {
-			fmt.Print(bb.ClearUpLine())
+	for {
+		cp := bb.ConfirmPrompt{
+			BasicPrompt: bb.BasicPrompt{
+				Label:   "Is everything OK? Continue",
+				Default: "N",
+				NoIcons: true,
+			},
+			ConfirmOpt: "e",
 		}
-		Info("Commit message is:\n%s", gitMsg)
-		checkConfirmStatus(bb.Confirm("Is everything OK? Continue", "N", true))
-		return gitMsg
+		c, err := cp.Run()
+		checkConfirmStatus(c, err)
+		if c == "Y" {
+			break
+		}
+		if c == "E" {
+			gitMsg, err = bb.Editor("", gitMsg)
+			checkInterrupt(err)
+			numlines := len(strings.Split(gitMsg, "\n")) + 2
+			for ; numlines > 0; numlines-- {
+				fmt.Print(bb.ClearUpLine())
+			}
+			Info("Commit message is:\n%s", gitMsg)
+			// checkConfirmStatus(bb.Confirm("Is everything OK? Continue", "N", true))
+			// return gitMsg
+			continue
+		}
 	}
 	return gitMsg
 }
@@ -150,6 +155,9 @@ func PromptConfirm(msg string) bool {
 }
 
 func linterSubject(s string) string {
+	if len(s) == 0 {
+		return s
+	}
 	// Remove all leading and trailing white spaces
 	s = strings.TrimSpace(s)
 	// Remove trailing period ...
@@ -161,6 +169,9 @@ func linterSubject(s string) string {
 }
 
 func linterBody(s string) string {
+	if len(s) == 0 {
+		return s
+	}
 	var upl = func(sl string) string {
 		rs := []rune(sl)
 		if len(rs) > 0 {
@@ -213,6 +224,9 @@ func wrapLine(l string, n int) []string {
 }
 
 func linterFoot(s string) string {
+	if len(s) == 0 {
+		return s
+	}
 	s = strings.TrimSpace(s)
 	// Split string to lines
 	strs := strings.Split(s, "\n")
