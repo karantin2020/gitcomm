@@ -1,3 +1,5 @@
+[![GoDoc](https://godoc.org/github.com/karantin2020/gitcomm?status.svg)](github.com/karantin2020/gitcomm) [![Go Report Card](https://goreportcard.com/badge/github.com/karantin2020/gitcomm)](https://goreportcard.com/report/github.com/karantin2020/gitcomm) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 ## Git commit message formatter
 
 Cli app to implement git message template  
