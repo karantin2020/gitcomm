@@ -3,8 +3,6 @@ package gitcomm
 import (
 	"bytes"
 	"fmt"
-	"log"
-	"os"
 	"os/exec"
 	"regexp"
 	"strconv"
@@ -28,8 +26,7 @@ func AutoTag(level string) {
 
 	curVer := closestVersion()
 	if curVer == "" {
-		log.Println("unknown current version")
-		os.Exit(1)
+		curVer = "v0.0.0"
 	}
 	newVer := bumpVersion(curVer, levels[level])
 	tagCmd := []string{"tag", "-a", "-m", "version " + newVer}
