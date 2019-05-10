@@ -21,15 +21,19 @@ $ go install -o gitcomm github.com/karantin2020/gitcomm/cmd
 Or install precompiled release binary.  
 
 ```sh
-Usage: gitcomm [-Avs]
+Usage: gitcomm [-v] [-Ast] | [-u]
 
 Automate git commit messaging
 
-Options:
+Source https://github.com/karantin2020/gitcomm
+                  
+Options:          
   -V, --version   Show the version and exit
   -A, --addAll    Adds, modifies, and removes index entries to match the working tree. Evals `git add -A`
   -v, --verbose   Switch log output
   -s, --show      Show last commit or not. Evals `git show -s` in the end of execution
+  -t, --tag       Create an annonated tag for the next logical version
+  -u, --undo      Revert last commit
 ```
 
 ```sh
