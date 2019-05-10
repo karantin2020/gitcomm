@@ -55,13 +55,10 @@ func getGitConfigBool(args ...string) bool {
 }
 
 func closestVersion() string {
-	cmdtl := exec.Command("git", "rev-list", "--tags", "--max-count=1")
-	tl, err := cmdtl.Output()
-	if err != nil {
-		return ""
-	}
-	cmd := exec.Command("git", "describe", "--tags", string(tl))
+	cmd := exec.Command("git", "tag")
 	bs, err := cmd.Output()
+	tl := bytes.Split([]byte(bs), []byte("\n"))
+	bs = tl[len(tl)-2]
 	if err != nil {
 		return ""
 	}
