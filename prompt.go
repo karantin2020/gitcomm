@@ -96,8 +96,8 @@ func fillMessage(msg *Message) {
 // Prompt function assignes user input to Message struct
 func Prompt() string {
 	fillMessage(&msg)
-	gitMsg := msg.String()
-	Info("\nCommit message is:\n%s\n", gitMsg)
+	gitMsg := msg.String() + "\n"
+	Info("\nCommit message is:\n%s", gitMsg)
 	for {
 		cp := bb.ConfirmPrompt{
 			BasicPrompt: bb.BasicPrompt{
@@ -113,13 +113,13 @@ func Prompt() string {
 			break
 		}
 		if c == "E" {
-			gitMsg, err = bb.Editor("", gitMsg)
-			checkInterrupt(err)
-			numlines := len(strings.Split(gitMsg, "\n")) + 2
-			for ; numlines > 0; numlines-- {
+			numlines := len(strings.Split(gitMsg, "\n"))
+			for ; numlines > -1; numlines-- {
 				fmt.Print(bb.ClearUpLine())
 			}
-			Info("Commit message is:\n%s", gitMsg)
+			gitMsg, err = bb.Editor("", gitMsg)
+			checkInterrupt(err)
+			Info(gitMsg)
 			// checkConfirmStatus(bb.Confirm("Is everything OK? Continue", "N", true))
 			// return gitMsg
 			continue
@@ -191,8 +191,9 @@ func linterBody(s string) string {
 			out = append(out, nl...)
 			continue
 		}
-		out = append(out, upl(lines[i]))
+		out = append(out, lines[i])
 	}
+	out[0] = upl(out[0])
 	return strings.Join(out, "\n")
 }
 
