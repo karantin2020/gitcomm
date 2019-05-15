@@ -58,7 +58,9 @@ func closestVersion() string {
 	cmd := exec.Command("git", "tag")
 	bs, err := cmd.Output()
 	tl := bytes.Split([]byte(bs), []byte("\n"))
-	bs = tl[len(tl)-2]
+	if len(tl) > 1 {
+		bs = tl[len(tl)-2]
+	}
 	if err != nil {
 		return ""
 	}
