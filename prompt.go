@@ -59,9 +59,6 @@ func fillMessage(msg *Message) {
 				if s == "" {
 					return bb.NewValidationError("Body must not be empty string")
 				}
-				if len(s) > 320 {
-					return bb.NewValidationError("Body is longer than 320 characters")
-				}
 				ins := strings.Split(s, "\n")
 				for i := range ins {
 					if len(ins[i]) > 72 {
@@ -172,6 +169,8 @@ func linterBody(s string) string {
 	if len(s) == 0 {
 		return s
 	}
+	// remove all leading and trailing white space
+	// s = strings.TrimSpace(s)
 	var upl = func(sl string) string {
 		rs := []rune(sl)
 		if len(rs) > 0 {
@@ -194,7 +193,7 @@ func linterBody(s string) string {
 		out = append(out, lines[i])
 	}
 	out[0] = upl(out[0])
-	return strings.Join(out, "\n")
+	return strings.TrimSpace(strings.Join(out, "\n"))
 }
 
 func wrapLine(l string, n int) []string {
