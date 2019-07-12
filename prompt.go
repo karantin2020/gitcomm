@@ -37,40 +37,30 @@ func fillMessage(msg *Message) {
 		BasicPrompt: bb.BasicPrompt{
 			Label:     "Type in the subject",
 			Formatter: linterSubject,
-			Validate: func(s string) error {
-				if s == "" {
-					return bb.NewValidationError("Subject must not be empty string")
-				}
-				if len(s) > 72 {
-					return bb.NewValidationError("Subject cannot be longer than 72 characters")
-				}
-				return nil
-			},
+			Validate:  validateSubject,
 		},
 	}
 	msg.Subject, err = p.Run()
 	checkInterrupt(err)
 	mlBody := bb.MultilinePrompt{
 		BasicPrompt: bb.BasicPrompt{
-			Label:     "Type in the body",
-			Default:   "# If applied, this commit will\n",
+			Label: "Type in the body",
+			Default: `# If applied, this commit will...
+# [Add/Fix/Remove/Update/Refactor/Document] [issue #id] [summary]
+`,
 			Formatter: linterBody,
-			Validate: func(s string) error {
-				if s == "" {
-					return bb.NewValidationError("Body must not be empty string")
-				}
-				ins := strings.Split(s, "\n")
-				for i := range ins {
-					if len(ins[i]) > 72 {
-						return bb.NewValidationError("Body must be wraped at 72 characters")
-					}
-				}
-				return nil
-			},
+			Validate:  validateBody,
 		},
 	}
 	msg.Body, err = mlBody.Run()
 	checkInterrupt(err)
+	// # Why is it necessary? (Bug fix, feature, improvements?)
+	// -
+	// # How does the change address the issue?
+	// -
+	// # What side effects does this change have?
+	// -
+
 	mlFoot := bb.MultilinePrompt{
 		BasicPrompt: bb.BasicPrompt{
 			Label:     "Type in the foot",
@@ -169,8 +159,9 @@ func linterBody(s string) string {
 	if len(s) == 0 {
 		return s
 	}
-	// remove all leading and trailing white space
-	// s = strings.TrimSpace(s)
+	// remove all leading white space
+	// doesn't work because there is commented message goes first
+	// s = strings.TrimLeft(s, "\t\n\v\f\r")
 	var upl = func(sl string) string {
 		rs := []rune(sl)
 		if len(rs) > 0 {
@@ -192,7 +183,16 @@ func linterBody(s string) string {
 		}
 		out = append(out, lines[i])
 	}
-	out[0] = upl(out[0])
+	for {
+		if len(out) == 0 {
+			break
+		}
+		if strings.TrimSpace(out[0]) != "" {
+			out[0] = upl(out[0])
+			break
+		}
+		out = out[1:]
+	}
 	return strings.TrimSpace(strings.Join(out, "\n"))
 }
 
@@ -230,14 +230,19 @@ func linterFoot(s string) string {
 	s = strings.TrimSpace(s)
 	// Split string to lines
 	strs := strings.Split(s, "\n")
+	out := []string{}
 	for i := len(strs); i > 0; i-- {
+		if strings.TrimSpace(strs[i-1]) == "" {
+			continue
+		}
 		if strings.HasPrefix(strs[i-1], "* ") {
 			strs[i-1] = strings.TrimPrefix(strs[i-1], "* ")
 		}
 		strs[i-1] = linterSubject(strs[i-1])
 		strs[i-1] = "* " + strs[i-1]
+		out = append(append([]string{}, strs[i-1]), out...)
 	}
-	return strings.Join(strs, "\n")
+	return strings.Join(out, "\n")
 }
 
 func validator(n int) func(val interface{}) error {
@@ -248,6 +253,29 @@ func validator(n int) func(val interface{}) error {
 		}
 		return nil
 	}
+}
+
+func validateBody(s string) error {
+	if s == "" {
+		return bb.NewValidationError("Body must not be empty string")
+	}
+	ins := strings.Split(s, "\n")
+	for i := range ins {
+		if len(ins[i]) > 72 {
+			return bb.NewValidationError("Body must be wraped at 72 characters")
+		}
+	}
+	return nil
+}
+
+func validateSubject(s string) error {
+	if s == "" {
+		return bb.NewValidationError("Subject must not be empty string")
+	}
+	if len(s) > 72 {
+		return bb.NewValidationError("Subject cannot be longer than 72 characters")
+	}
+	return nil
 }
 
 func checkInterrupt(err error) {
