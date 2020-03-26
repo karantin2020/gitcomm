@@ -33,7 +33,7 @@ func AutoTag(level string) {
 	newVer := bumpVersion(curVer, levels[level])
 	p := bb.Prompt{
 		BasicPrompt: bb.BasicPrompt{
-			Label:   "Type in the subject",
+			Label:   "Need to correct tag?",
 			Default: newVer,
 			// Formatter: linterSubject,
 			Validate: validateTag,
