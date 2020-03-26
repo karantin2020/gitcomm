@@ -6,6 +6,8 @@ import (
 	"os/exec"
 	"regexp"
 	"strconv"
+
+	bb "github.com/karantin2020/promptui"
 )
 
 // copypast from https://github.com/calmh/git-autotag
@@ -29,13 +31,23 @@ func AutoTag(level string) {
 		curVer = "v0.0.0"
 	}
 	newVer := bumpVersion(curVer, levels[level])
+	p := bb.Prompt{
+		BasicPrompt: bb.BasicPrompt{
+			Label:   "Type in the subject",
+			Default: newVer,
+			// Formatter: linterSubject,
+			Validate: validateTag,
+		},
+	}
+	newVer, err := p.Run()
 	tagCmd := []string{"tag", "-a", "-m", "version " + newVer}
 	if sign {
 		tagCmd = append(tagCmd, "-s")
 	}
-	tagCmd = append(tagCmd, newVer)
 
-	fmt.Println(newVer)
+	// fmt.Println(newVer)
+	checkInterrupt(err)
+	tagCmd = append(tagCmd, newVer)
 	gitColorCmd(tagCmd...)
 }
 
@@ -97,4 +109,16 @@ func versionParts(s string) (prefix string, parts []int) {
 		}
 	}
 	return
+}
+
+func validateTag(version string) error {
+	if version == "" {
+		return bb.NewValidationError("Version must not be empty string")
+	}
+	exp := regexp.MustCompile(`^([^\d]*)(\d+)\.(\d+)\.(\d+)$`)
+	match := exp.FindStringSubmatch(version)
+	if len(match) != 5 {
+		return bb.NewValidationError("Version tag must be of type 'v0.1.2'")
+	}
+	return nil
 }
