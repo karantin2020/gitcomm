@@ -8,14 +8,13 @@ import (
 
 	cli "github.com/jawher/mow.cli"
 	"github.com/karantin2020/gitcomm"
+	"github.com/karantin2020/gitcomm/version"
 )
-
-const version = "gitcomm 0.4.0"
 
 func main() {
 	app := cli.App("gitcomm", "Automate git commit messaging\n"+
 		"\nSource https://github.com/karantin2020/gitcomm")
-	app.Version("V version", version)
+	app.Version("V version", version.BuildDetails())
 
 	app.Spec = "[-v] [-Ast] | [-u]"
 
